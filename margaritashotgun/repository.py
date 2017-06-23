@@ -49,10 +49,17 @@ class Repository():
         if self.gpg_verify:
             logger.debug("gpg verification enabled, initializing gpg")
             gpg_home = os.path.expanduser('~/.gnupg')
-            self.gpg = gnupg.GPG(gnupghome=gpg_home)
+            self.gpg = self.init_gpg()
             self.key_path, self.key_info = self.get_signing_key()
             logger.debug("{0} {1}".format(self.key_path, self.key_info))
             self.check_signing_key()
+
+    def _init_gpg(self):
+        try:
+            gpg = gnupg.GPG(gnupghome=gpg_home)
+        except:
+            gpg = gnupg.GPG(homedir=gpg_home)
+        return gpg
 
     def get_signing_key(self):
         """
